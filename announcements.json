@@ -1,0 +1,13 @@
+{
+  "latest_version_code": 9,
+  "messages": [
+    {
+      "id": "20261012-150345",
+      "title": "New Update 1.4.1",
+      "body": "• Backups, restores and achievement downloads now run in the background, with a progress notification\n\n• Automatic backups finish reliably in the background\n\n• New small backup: a much smaller file; cover art and icons download again after a restore\n\n• Achievement downloads queue and can be stopped\n\n",
+      "notify": true,
+      "expires_at": "2026-10-13",
+      "min_version": 9
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+name: Announcements
+
+# A form for changing announcements.json without editing it by hand.
+# Actions tab > Announcements > Run workflow, fill in the boxes, Run.
+
+on:
+  workflow_dispatch:
+    inputs:
+      what:
+        description: "What do you want to do?"
+        type: choice
+        required: true
+        default: "Post a message"
+        options:
+          - "Post a message"
+          - "Clear all messages"
+          - "Set latest app version"
+      title:
+        description: "Message title"
+        type: string
+      message:
+        description: "Message text"
+        type: string
+      notify:
+        description: "Also send as a phone notification"
+        type: boolean
+        default: false
+      expires:
+        description: "Remove automatically after this day (YYYY-MM-DD, optional)"
+        type: string
+      update_button:
+        description: "Add an Update button (opens the Play Store)"
+        type: boolean
+        default: false
+      keep_existing:
+        description: "Keep messages already showing (off = replace them)"
+        type: boolean
+        default: false
+      min_version:
+        description: "Only show to this app version code and newer (optional, e.g. 7)"
+        type: string
+      version:
+        description: "Latest app version code (only for 'Set latest app version')"
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: announcements
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update announcements.json
+        env:
+          WHAT: ${{ inputs.what }}
+          TITLE: ${{ inputs.title }}
+          MESSAGE: ${{ inputs.message }}
+          NOTIFY: ${{ inputs.notify }}
+          EXPIRES: ${{ inputs.expires }}
+          UPDATE_BUTTON: ${{ inputs.update_button }}
+          KEEP_EXISTING: ${{ inputs.keep_existing }}
+          MIN_VERSION: ${{ inputs.min_version }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          fail() { echo "::error::$1"; echo "### Not changed" >> "$GITHUB_STEP_SUMMARY"; echo "$1" >> "$GITHUB_STEP_SUMMARY"; exit 1; }
+
+          # A file that was broken by a hand edit is started again rather
+          # than blocking the form.
+          jq -e . announcements.json > /dev/null 2>&1 || echo '{"messages": []}' > announcements.json
+
+          case "$WHAT" in
+            "Post a message")
+              [ -n "$TITLE" ] || [ -n "$MESSAGE" ] || fail "Fill in a title or some message text."
+              if [ -n "$EXPIRES" ] && ! date -u -d "$EXPIRES" +%F 2>/dev/null | grep -qx "$EXPIRES"; then
+                fail "The expiry day must look like 2026-10-20."
+              fi
+              if [ -n "$MIN_VERSION" ] && ! echo "$MIN_VERSION" | grep -Eqx '[0-9]+'; then
+                fail "The minimum version code must be a whole number, like 7."
+              fi
+              jq --arg id "$(date -u +%Y%m%d-%H%M%S)" --arg title "$TITLE" --arg body "$MESSAGE" \
+                 --arg expires "$EXPIRES" --argjson notify "$NOTIFY" --argjson update "$UPDATE_BUTTON" \
+                 --argjson keep "$KEEP_EXISTING" --arg min "$MIN_VERSION" '
+                .messages = (
+                  [ {id: $id, title: $title, body: $body}
+                    + (if $notify then {notify: true} else {} end)
+                    + (if $expires != "" then {expires_at: $expires} else {} end)
+                    + (if $update then {action: "update"} else {} end)
+                    + (if $min != "" then {min_version: ($min | tonumber)} else {} end) ]
+                  + (if $keep then (.messages // []) else [] end))
+              ' announcements.json > new.json
+              note="Post announcement"
+              ;;
+            "Clear all messages")
+              jq '.messages = []' announcements.json > new.json
+              note="Clear announcements"
+              ;;
+            "Set latest app version")
+              echo "$VERSION" | grep -Eqx '[0-9]+' || fail "The version code must be a whole number, like 6."
+              jq --argjson v "$VERSION" '.latest_version_code = $v' announcements.json > new.json
+              note="Latest app version: $VERSION"
+              ;;
+            *)
+              fail "Unknown choice."
+              ;;
+          esac
+
+          mv new.json announcements.json
+          {
+            echo "### Done: $WHAT"
+            echo "The file the app reads is now:"
+            echo '```json'
+            cat announcements.json
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if git diff --quiet -- announcements.json; then
+            echo "Nothing changed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898238+github-actions[bot]@users.noreply.github.com"
+          git add announcements.json
+          git commit -m "$note"
+          # The server check may have committed in the meantime.
+          git pull --rebase
+          git push

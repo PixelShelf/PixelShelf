@@ -1,0 +1,67 @@
+name: Server check
+
+# Pings the PixelShelf server's health address and records the answer in
+# status.json, which the app reads from this repo. This is the only request
+# the server sees for this whole feature: one every 15 minutes, in total,
+# however many people use the app.
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: server-check
+  cancel-in-progress: false
+
+env:
+  # The address to check. Kept as a repository secret (Settings > Secrets
+  # and variables > Actions > HEALTH_URL) so it isn't written in this file;
+  # GitHub also blanks it out of the run logs.
+  HEALTH_URL: ${{ secrets.HEALTH_URL }}
+  # Rewrite status.json at least this often even when nothing changed, so
+  # the app can tell "still up" apart from "the checker stopped running".
+  HEARTBEAT_SECONDS: 21600
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the server
+        run: |
+          if [ -z "$HEALTH_URL" ]; then
+            echo "HEALTH_URL secret is not set - not recording anything."
+            exit 1
+          fi
+          status=down
+          # One request when healthy. Only a failure is retried, so a single
+          # dropped connection isn't reported as an outage.
+          for attempt in 1 2 3; do
+            if curl -fsS --max-time 15 -A pixelshelf-status-check -o /dev/null "$HEALTH_URL"; then
+              status=up
+              break
+            fi
+            sleep 20
+          done
+
+          now=$(date +%s)
+          old_status=$(jq -r '.status // ""' status.json 2>/dev/null || echo "")
+          old_at=$(jq -r '.checked_at_epoch // 0' status.json 2>/dev/null || echo 0)
+
+          if [ "$status" = "$old_status" ] && [ $((now - old_at)) -lt "$HEARTBEAT_SECONDS" ]; then
+            echo "Still $status - nothing to record."
+            exit 0
+          fi
+
+          printf '{"status": "%s", "checked_at_epoch": %s}\n' "$status" "$now" > status.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898238+github-actions[bot]@users.noreply.github.com"
+          git add status.json
+          git commit -m "Server status: $status"
+          git push
