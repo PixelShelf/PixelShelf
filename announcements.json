@@ -2,11 +2,12 @@
   "latest_version_code": 13,
   "messages": [
     {
-      "id": "20261021-163733",
-      "title": "PixelShelf has officially launched",
-      "body": "PixelShelf is officially here!\n\nA big thanks to all those that have supported the journey. \n",
-      "expires_at": "2026-11-01",
-      "min_version": 11
+      "id": "20261029-222434",
+      "title": "V1.6.0 Update Live",
+      "body": "• New feature: Xbox/Steam Playtime and recently played. Requires linking. Found in Now Playing\n• New Feature: Xbox Mythic Achievement tracking. Ability to filter and keep track of Xbox games with Mythic status. \n• New Feature: New Share cards in both Stats and the new playtime section.\n• New Feature: Ability to import from spreadsheets.",
+      "expires_at": "2026-11-05",
+      "action": "update",
+      "min_version": 12
     }
   ]
 }
