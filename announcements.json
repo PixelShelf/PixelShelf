@@ -2,21 +2,11 @@
   "latest_version_code": 21,
   "messages": [
     {
-      "id": "20261030-162058",
-      "title": "New: Xbox 360/OG playtime tracking",
-      "body": "Xbox doesn't record how long you play Xbox 360/Original games, so PixelShelf now times them for you.\n Turn on Xbox 360 Tracking in Recently Played and your sessions are timed automatically, with a notification when tracking starts and when it's done. Prefer to do it yourself? Tap + on any Xbox 360/OG game to log your time by hand.",
+      "id": "20261111-211808",
+      "title": "Welcome to PixelShelf!",
+      "body": "After months of work, I’m thrilled to finally get this app into your hands. As a gamer and collector, building PixelShelf has been a passion project, and I hope it makes organizing your library a breeze.\n\n​💡 Tip: Don't forget to link your Steam and Xbox accounts, there are some great features built into the app. Also, feel free to share your collection count on the leaderboard\n\n​If you're enjoying the app, please consider sharing it with your friends or leaving a 5-star review on the Play Store. Your support makes all the difference! ❤️\n\n​— PixelShelf Developer",
       "notify": true,
-      "expires_at": "2026-11-15",
-      "action": "update",
-      "min_version": 13
-    },
-    {
-      "id": "20261029-222434",
-      "title": "V1.6.0 Update Live",
-      "body": "• New feature: Xbox/Steam Playtime and recently played. Requires linking. Found in Now Playing\n• New Feature: Xbox Mythic Achievement tracking. Ability to filter and keep track of Xbox games with Mythic status. \n• New Feature: New Share cards in both Stats and the new playtime section.\n• New Feature: Ability to import from spreadsheets.",
-      "expires_at": "2026-11-05",
-      "action": "update",
-      "min_version": 12
+      "action": "update"
     }
   ]
 }
