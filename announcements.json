@@ -2,10 +2,11 @@
   "latest_version_code": 22,
   "messages": [
     {
-      "id": "20261115-080455",
-      "title": "New Features",
-      "body": "• XBOX Original Achievements and playtime now included throughout app as and when XBOX releases updates.\n• Updates to XBOX playtime tracking functionality to capture Xbox 360 and Original games that do have playtime provided by XBOX.\n• Steam Achievement sets now included for games that support it\n• V2.0 Coming Soon!\n",
-      "action": "update"
+      "id": "20261118-212710",
+      "title": "PixelShelf V2.0 - Coming Soon",
+      "body": "What's new in PixelShelf V2.0\n\nA fresh new look and more features:\n\n• New look: glass cards, soft shadows and smoother animations throughout.\n• Add and Quick Add redesigned, with per-game details and a slicker add animation.\n• Deeper integration between pages.\n• Game Detail reworked, with tabs and better visuals\n• New rich progress tracking for XBOX and Steam.\n• Game series information, recommendations and time to beat.\n• Screenshots and build in video player for the games in your library.\n• Notes now support bullets, multi-line text and photos\n\nComing Soon!",
+      "notify": true,
+      "expires_at": "2026-12-01"
     }
   ]
 }
