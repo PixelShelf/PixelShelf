@@ -2,11 +2,12 @@
   "latest_version_code": 24,
   "messages": [
     {
-      "id": "20261118-212710",
-      "title": "PixelShelf V2.0 - Coming Soon",
-      "body": "What's new in PixelShelf V2.0\n\nA fresh new look and more features:\n\n• New look: glass cards, soft shadows and smoother animations throughout.\n• Add and Quick Add redesigned, with per-game details and a slicker add animation.\n• Deeper integration between pages.\n• Game Detail reworked, with tabs and better visuals\n• New rich progress tracking for XBOX and Steam.\n• Game series information, recommendations and time to beat.\n• Screenshots and build in video player for the games in your library.\n• Notes now support bullets, multi-line text and photos\n\nComing Soon!",
+      "id": "20261120-071617",
+      "title": "PixelShelf V2.0 - It's Out Now!",
+      "body": "• New look: glass cards, soft shadows and smoother animations throughout.\n• Add and Quick Add redesigned, with per-game details and a slicker add animation.\n• Deeper integration between pages.\n• Game Detail reworked, with tabs and better visuals\n• New rich progress tracking for XBOX and Steam.\n• Game series information, recommendations and time to beat.\n• Screenshots and build in video player for the games in your library.\n• Notes now support bullets, multi-line text and photos",
       "notify": true,
-      "expires_at": "2026-12-01"
+      "expires_at": "2026-12-01",
+      "action": "update"
     }
   ]
 }
